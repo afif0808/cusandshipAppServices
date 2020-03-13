@@ -8,20 +8,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	shippingSqlFields = "shipping_id,shipping_invoice,shipping_information,shipping_date"
+	customerSqlFields = "customer_id,customer_name,customer_information,customer_addedat"
+)
+
 type mysqlShippingRepository struct {
 	Conn *sql.DB
 }
 
 func NewMysqlShippingRepository(conn *sql.DB) shipping.Repository {
 	return &mysqlShippingRepository{conn}
-}
-
-func (msr *mysqlShippingRepository) getShippingSqlFields() string {
-	return "shipping_id,shipping_invoice,shipping_information,shipping_date"
-}
-
-func (msr *mysqlShippingRepository) getCustomerSqlFields() string {
-	return "customer_id,customer_name,customer_information,customer_addedat"
 }
 
 // fetch reusable code for all shipping retrieval
@@ -54,7 +51,7 @@ func (msr *mysqlShippingRepository) fetch(query string, args ...interface{}) ([]
 
 // GetById get a single shipping by id
 func (msr *mysqlShippingRepository) GetById(id int64) (shipping *models.Shipping, err error) {
-	query := `SELECT ` + msr.getShippingSqlFields() + `,` + msr.getCustomerSqlFields() + ` FROM shipping
+	query := `SELECT ` + shippingSqlFields + `,` + customerSqlFields + ` FROM shipping
 	INNER JOIN customer ON shipping.customer_id = customer.customer_id WHERE shipping_id = ?`
 	shippings, err := msr.fetch(query, id)
 	if err != nil {

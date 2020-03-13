@@ -1,7 +1,8 @@
-package repository
+package repository_test
 
 import (
 	"cusandshipAppServices/models"
+	"cusandshipAppServices/shipping/repository"
 	"testing"
 	"time"
 
@@ -26,7 +27,7 @@ func TestGetById(t *testing.T) {
 	INNER JOIN customer ON shipping.customer_id = customer.customer_id WHERE shipping_id = ?`
 
 	mock.ExpectQuery(query).WillReturnRows(rows)
-	shippingRepository := NewMysqlShippingRepository(db)
+	shippingRepository := repository.NewMysqlShippingRepository(db)
 	shippingId := int64(1)
 	shipping, err := shippingRepository.GetById(shippingId)
 	assert.NoError(t, err)
@@ -48,7 +49,7 @@ func TestAdd(t *testing.T) {
 	mock.ExpectExec(query).
 		WithArgs(shippingForm.Invoice, shippingForm.Information, shippingForm.CustomerId).
 		WillReturnResult(sqlmock.NewResult(2, 1))
-	shippingRepository := NewMysqlShippingRepository(db)
+	shippingRepository := repository.NewMysqlShippingRepository(db)
 	lastInsertId, err := shippingRepository.Add(shippingForm)
 	assert.NoError(t, err)
 	assert.NotEqual(t, int64(0), lastInsertId)

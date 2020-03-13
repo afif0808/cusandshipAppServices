@@ -24,6 +24,7 @@ func NewShippingHandler(e *echo.Echo, usecase shipping.Usecase) {
 //Add add a new shipping by given request body and write the created shipping id as the response
 //Add implements echo.HandlerFunc function signature
 func (sh *ShippingHandler) Add(c echo.Context) error {
+
 	var shippingForm models.ShippingForm
 	err := c.Bind(&shippingForm)
 	if err != nil {
@@ -37,7 +38,7 @@ func (sh *ShippingHandler) Add(c echo.Context) error {
 	if err != nil {
 		return c.JSON(getStatusCode(err), ResponseError{Message: err.Error()})
 	}
-	return c.JSON(http.StatusCreated, lastInsertedId)
+	return c.JSON(http.StatusCreated, map[string]interface{}{"id": lastInsertedId})
 }
 
 type ResponseError struct {
